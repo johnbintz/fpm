@@ -1,4 +1,5 @@
 require 'tempfile'
+require 'fileutils'
 
 module FPM
   class Job
@@ -46,11 +47,11 @@ module FPM
 
         Dir.chdir(@chdir) do
           file.unlink
-          system output.join(' ').tap { |o| p o }
+          system output.join(' ')
         end
 
         File.unlink(@package) if File.file?(@package)
-        File.rename path, @package
+        FileUtils.mv path, @package
       end
     end
   end
