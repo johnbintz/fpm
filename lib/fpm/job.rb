@@ -51,6 +51,7 @@ module FPM
         end
 
         File.unlink(@package) if File.file?(@package)
+        FileUtils.mkdir_p File.dirname(@package)
         FileUtils.mv path, @package
       end
     end
