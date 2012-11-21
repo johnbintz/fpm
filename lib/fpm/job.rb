@@ -36,7 +36,7 @@ module FPM
         output = [ 'fpm' ]
         output << '--verbose' if @verbose
         output << "--after-install #{File.expand_path(@after_install)}" if @after_install
-        dependencies.each { |dependency| output << "-d #{dependency}" }
+        dependencies.flatten.each { |dependency| output << "-d #{dependency}" }
         output << "-s #{@source}"
         output << "-t #{@target}"
         output << %{-n "#{@name}"}
