@@ -28,6 +28,40 @@ module FPM
       @source_files ||= []
     end
 
+    class BuildGroup
+      attr_accessor :chdir, :verbose, :after_install, :source, :target, :version, :prefix, :package
+
+      def dependencies
+        @dependencies ||= []
+      end
+
+      def source_files
+        @source_files ||= []
+      end
+
+      def build(name, &block)
+        job = Job.new(name)
+
+        self.instance_variables.each do |var|
+          ivar = self.instance_variable_get(var)
+          case ivar
+          when Proc
+            ivar = ivar.call(job)
+          else
+            ivar
+          end
+
+          job.instance_variable_set(var, ivar)
+        end
+
+        job.build(&block)
+      end
+    end
+
+    def self.group(&block)
+      yield BuildGroup.new
+    end
+
     def run
       Tempfile.open('fpm') do |file|
         path = file.path
@@ -43,11 +77,11 @@ module FPM
         output << %{-v "#{@version}"}
         output << "--prefix #{@prefix}" if @prefix
         output << "-p #{file.path}"
-        source_files.each { |file| output << file }
+        source_files.flatten.each { |file| output << file }
 
         Dir.chdir(@chdir) do
           file.unlink
-          system output.join(' ')
+          system output.join(' ').tap { |o| p o }
         end
 
         File.unlink(@package) if File.file?(@package)

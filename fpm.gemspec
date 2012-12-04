@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
 
   # For parsing JSON (required for some Python support, etc)
   # http://flori.github.com/json/doc/index.html
-  spec.add_dependency("json", "1.6.6") # license: Ruby License
+  spec.add_dependency("json") # license: Ruby License
   
   # For logging
   # https://github.com/jordansissel/ruby-cabin
