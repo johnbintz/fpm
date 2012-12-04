@@ -1,3 +1,38 @@
+0.4.24 (November 30, 2012)
+  - Don't include an empty url in rpm spec (#296, #276; patch by Pranay Kanwar)
+  - Don't require extra parameters if you use --inputs (#278, #297; Patch by
+    Pranay Kanwar)
+  - python: supports requirements.txt now for dependency information.
+  - python: supports pip now. Use '--python-pip path/to/pip' to have fpm use
+    it instead of easy_install.
+  - solaris: package building works again (#216, #299, patch by Pierre-Yves
+    Ritschard)
+
+0.4.23 (November 26, 2012)
+  - The --directories flag is now recursive when the output package is rpm.
+    This makes all directories under a given path as owned by the package
+    so they'll be removed when the package is uninstalled (#245, #293, #294,
+    patch by Justin Ellison)
+  - Add fpm version info to '--help' output (#281)
+  - gem to rpm: Use 'rubygem(gemname)' for dependencies (#284, patch by
+    Jan Vansteenkiste)
+  - Fix a bug in gem version mangling (#292, #291; patch by Pranay Kanwar)
+  - Fix compatibility with Python 2.5 (#279, patch by Denis Bilenko)
+
+0.4.22 (November 15, 2012)
+  - Add --no-depends flag for creating packages with no dependencies listed
+    (#289, patch by Brett Gailey)
+  - Fix a bug where blank lines were present in a debian control file.
+    (#288, patch by Andrew Bunday)
+
+0.4.21 (November 8, 2012)
+  - gem: remove restriction on expected gem names (#287)
+  - add --directory flag; lets you mark a directory as being owned by a
+    package. (#260, #245, patch by ajf8)
+  - deb: don't include a version in the Provides field (#280)
+  - gem: if the version is '1.1' make it imply '1.1.0' (#269, patch by 
+    Radim Marek)
+
 0.4.20 (October 5, 2012)
   - python: only specify --install-{scripts,lib,data} flags to setup.py if
     they were given on the command line to fpm. Fixes #273.

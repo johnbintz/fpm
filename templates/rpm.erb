@@ -40,11 +40,17 @@ License: <%= license.gsub("\n", " ") %>
 <% if !vendor.nil? and !vendor.empty? -%>
 Vendor: <%= vendor %>
 <% end -%>
-URL: <%= url or "http://nourlgiven.example.com/" %>
+<% if !url.nil? and !url.empty? -%>
+URL: <%= url %>
+<%else -%>
+URL: http://nourlgiven.example.com/
+<% end -%>
 Packager: <%= maintainer %>
 
+<% if !attributes[:no_depends?] -%>
 <% dependencies.each do |req| -%>
 Requires: <%= req %>
+<% end -%>
 <% end -%>
 <% provides.each do |prov| -%>
 Provides: <%= prov %>
@@ -107,6 +113,16 @@ fi
 <% config_files.each do |path| -%>
 %config(noreplace) <%= File.join(prefix, path) %>
 <% end -%>
+<% subdirs = [] -%>
+<% directories.each do |path| -%>
+%dir <%= File.join(prefix, path) %>
+<%#  We need to include hidden directories, but exclude . and .. -%>
+<%   ::Dir.glob("#{path}/**/*/", File::FNM_DOTMATCH) do |subdir| -%>
+<%     next if File.basename(subdir) =~ /^\.+$/ -%>
+%dir <%= File.join(prefix, subdir) %>
+<% subdirs << subdir -%>
+<%   end -%>
+<% end -%>
 <%# list only files, not directories? -%>
 <%= 
   # Reject config files already listed or parent directories, then prefix files
@@ -120,6 +136,7 @@ fi
   # Replace % with [%] to make rpm not expand macros
   files.collect { |f| "/#{f}" } \
     .reject { |f| config_files.include?(f) } \
+    .reject { |f| subdirs.include?("#{f}/") } \
     .collect { |f| f[/\s/] and "\"#{f}\"" or f } \
     .collect { |f| f.gsub("[", "[\\[]") } \
     .collect { |f| f.gsub("*", "[*]") } \

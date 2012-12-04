@@ -121,6 +121,15 @@ class FPM::Package::RPM < FPM::Package
           provides
         end
       end
+      self.dependencies = self.dependencies.collect do |dependency|
+        first, remainder = dependency.split("-", 2)
+        if first == "rubygem"
+          name, remainder = remainder.split(" ", 2)
+          "rubygem(#{name})#{remainder ? " #{remainder}" : ""}"
+        else
+          dependency
+        end
+      end
       #self.provides << "rubygem(#{self.name})"
     end
   end # def converted
@@ -167,6 +176,7 @@ class FPM::Package::RPM < FPM::Package
     #input.replaces += replaces
     
     self.config_files += rpm.config_files
+    self.directories += rpm.directories
 
     # Extract to the staging directory
     rpm.extract(staging_path)
